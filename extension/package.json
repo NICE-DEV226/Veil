@@ -5,6 +5,11 @@
   "version": "1.0.0",
   "publisher": "NICE-DEV226",
   "icon": "icon.png",
+  "homepage": "https://github.com/NICE-DEV226/Veil",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NICE-DEV226/Veil"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
