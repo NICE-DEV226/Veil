@@ -26,7 +26,7 @@ jobs:
         cache-dependency-path: extension/package-lock.json
 
     - name: Install Dependencies
-      run: cd extension && npm ci
+      run: cd extension && npm install
 
     - name: Build Extension
       run: cd extension && npm run compile
