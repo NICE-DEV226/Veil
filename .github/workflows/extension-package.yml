@@ -5,10 +5,12 @@ on:
     branches: [ main ]
     paths:
       - 'extension/**'
+      - '.github/workflows/extension-package.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'extension/**'
+      - '.github/workflows/extension-package.yml'
 
 jobs:
   package:
@@ -21,7 +23,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
         cache: 'npm'
         cache-dependency-path: extension/package-lock.json
 

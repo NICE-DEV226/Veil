@@ -5,10 +5,12 @@ on:
     branches: [ main ]
     paths:
       - 'engine/**'
+      - '.github/workflows/engine-build.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'engine/**'
+      - '.github/workflows/engine-build.yml'
 
 jobs:
   build:
