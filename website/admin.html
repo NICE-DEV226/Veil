@@ -310,6 +310,7 @@
         </div>
         <ul class="nav-menu">
             <li class="nav-item active" data-view="dashboard"><span>📊</span> Dashboard</li>
+            <li class="nav-item" data-view="fleet"><span>👥</span> Global Fleet</li>
             <li class="nav-item" data-view="rules"><span>🛡️</span> Security Rules</li>
             <li class="nav-item" data-view="feedback"><span>📣</span> User Feedback</li>
             <li class="nav-item" data-view="config"><span>⚙️</span> Engine Config</li>
@@ -332,14 +333,14 @@
 
             <section class="stats-summary">
                 <div class="stat-card-pro">
-                    <div class="stat-lbl">Active Users</div>
-                    <div class="stat-val">3,892</div>
-                    <div style="font-size: 0.7rem; color: var(--accent-emerald);">+12% vs last week</div>
+                    <div class="stat-lbl">Global Users (Fleet)</div>
+                    <div class="stat-val" id="global-user-count">0</div>
+                    <div style="font-size: 0.7rem; color: var(--accent-emerald);">Active distributed nodes</div>
                 </div>
                 <div class="stat-card-pro">
-                    <div class="stat-lbl">Vulnerabilities Blocked</div>
-                    <div class="stat-val">48,291</div>
-                    <div style="font-size: 0.7rem; color: var(--accent-emerald);">Real-time AST analysis</div>
+                    <div class="stat-lbl">Global Blocks</div>
+                    <div class="stat-val" id="global-block-count">0</div>
+                    <div style="font-size: 0.7rem; color: var(--accent-emerald);">Total SaaS protection</div>
                 </div>
                 <div class="stat-card-pro">
                     <div class="stat-lbl">Feedback Received</div>
@@ -366,6 +367,33 @@
                         <!-- Brief feed -->
                     </div>
                 </section>
+            </div>
+        </section>
+
+        <!-- Global Fleet View -->
+        <section id="fleet" class="view-section">
+            <header class="top-bar">
+                <div class="welcome-text">
+                    <h1>Global User Fleet</h1>
+                    <p>Monitor and track every active Veil installation across the network.</p>
+                </div>
+            </header>
+
+            <div class="full-width-section">
+                <table class="rule-table">
+                    <thead>
+                        <tr>
+                            <th>User ID (UUID)</th>
+                            <th>Status</th>
+                            <th>Findings</th>
+                            <th>Last Activity</th>
+                            <th>Security Health</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fleet-tbody">
+                        <!-- Populated by SaaS API -->
+                    </tbody>
+                </table>
             </div>
         </section>
 

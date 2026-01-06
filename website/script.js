@@ -1,4 +1,6 @@
-// Senior Feedback & Analytics Engine for Veil
+// SaaS Admin & Analytics Engine for Veil
+const API_BASE = 'http://localhost:8080/api';
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Navigation SPA Logic
     const navItems = document.querySelectorAll('.nav-item[data-view]');
@@ -8,160 +10,121 @@ document.addEventListener('DOMContentLoaded', () => {
         item.addEventListener('click', () => {
             const viewId = item.getAttribute('data-view');
 
-            // Update Navigation UI
             navItems.forEach(i => i.classList.remove('active'));
             item.classList.add('active');
 
-            // Update View
             sections.forEach(s => s.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
 
             // Specific View Refresh
+            if (viewId === 'dashboard') renderDashboardStats();
+            if (viewId === 'fleet') renderFleet();
             if (viewId === 'rules') renderRules();
             if (viewId === 'feedback') renderFullFeedback();
             if (viewId === 'config') simulateRpcLogs();
         });
     });
 
-    // 2. Feedback Submission Logic (Landing Page - Only if not in VS Code)
+    // 2. Feedback Submission (Landing Page)
     const feedbackForm = document.getElementById('feedback-form');
-    const fbSuccess = document.getElementById('fb-success');
-
     if (feedbackForm) {
-        feedbackForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const feedback = {
-                id: Date.now(),
-                name: document.getElementById('fb-name').value,
-                email: document.getElementById('fb-email').value,
-                type: document.getElementById('fb-type').value,
-                message: document.getElementById('fb-message').value,
-                date: new Date().toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'short', day: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                }),
-                status: 'New'
-            };
-
-            const allFeedback = JSON.parse(localStorage.getItem('veil_feedback') || '[]');
-            allFeedback.unshift(feedback);
-            localStorage.setItem('veil_feedback', JSON.stringify(allFeedback));
-
-            feedbackForm.style.opacity = '0';
-            setTimeout(() => {
-                feedbackForm.style.display = 'none';
-                fbSuccess.style.display = 'block';
-            }, 300);
-        });
+        feedbackForm.addEventListener('submit', handleFeedbackSubmit);
     }
 
     // 3. Initialize Startup View
-    if (document.getElementById('trendsChart')) {
-        renderDashboardStats();
-    }
+    renderDashboardStats();
+    setInterval(renderDashboardStats, 10000); // Polling global stats
 });
 
-// --- View Renderers ---
+async function renderDashboardStats() {
+    try {
+        // Fetch Global Stats from SaaS API
+        const response = await fetch(`${API_BASE}/admin/stats`);
+        const globalData = await response.json();
 
-function renderDashboardStats() {
-    // Use Real Data from VS Code extension if available, otherwise fallback to localStorage
-    const stats = window.veilStats || JSON.parse(localStorage.getItem('veil.userStats') || '{}');
-    let allFeedback = JSON.parse(localStorage.getItem('veil_feedback') || '[]');
+        document.getElementById('global-user-count').textContent = globalData.totalUsers.toLocaleString();
+        document.getElementById('global-block-count').textContent = globalData.globalFindings.toLocaleString();
 
-    // Seed sample feedback if empty
-    if (allFeedback.length === 0) {
-        allFeedback = [
-            { id: 1, name: "Alex Dev", email: "alex@example.com", type: "rule", message: "Insecure CORS policies detection in Flask.", date: "Jan 5, 2026", status: "Resolved" },
-            { id: 2, name: "Sarah Sec", email: "sarah@cyber.io", type: "feature", message: "Severity breakdown in sidebar.", date: "Jan 5, 2026", status: "Pending" }
-        ];
-    }
+        // Feed logic
+        const allFeedback = JSON.parse(localStorage.getItem('veil_feedback') || '[]');
+        document.getElementById('total-feedback-count').textContent = allFeedback.length;
 
-    // Update Counters with REAL data
-    document.getElementById('total-feedback-count').textContent = allFeedback.length;
-    if (stats.totalFindings !== undefined) {
-        const blockEl = document.getElementById('total-block-count');
-        if (blockEl) blockEl.textContent = stats.totalFindings.toLocaleString();
-    }
-
-    // Brief feed for Dashboard
-    const feedEl = document.getElementById('dashboard-feed');
-    if (feedEl) {
-        feedEl.innerHTML = allFeedback.slice(0, 3).map(fb => `
-            <div class="feed-item">
-                <div class="feed-header">
-                    <span style="font-weight: 700; color: #fff;">${fb.name}</span>
-                    <span class="tag ${fb.type === 'rule' ? 'tag-rule' : 'tag-feature'}">${fb.type}</span>
+        const feedEl = document.getElementById('dashboard-feed');
+        if (feedEl) {
+            feedEl.innerHTML = allFeedback.slice(0, 3).map(fb => `
+                <div class="feed-item">
+                    <div class="feed-header">
+                        <span style="font-weight: 700; color: #fff;">${fb.name}</span>
+                        <span class="tag ${fb.type === 'rule' ? 'tag-rule' : 'tag-feature'}">${fb.type}</span>
+                    </div>
+                    <div class="feed-content">${fb.message.substring(0, 45)}...</div>
                 </div>
-                <div class="feed-content">${fb.message.substring(0, 45)}...</div>
-            </div>
-        `).join('');
-    }
+            `).join('');
+        }
 
-    // Refresh Chart with REAL history
-    if (stats.history) {
-        updateTrendsChart(stats.history);
-    } else {
-        initializeStaticCharts();
+        // Real Data Chart if available
+        const localStats = window.veilStats || JSON.parse(localStorage.getItem('veil.userStats') || '{}');
+        if (localStats.history) {
+            updateTrendsChart(localStats.history);
+        } else {
+            initializeStaticCharts();
+        }
+    } catch (e) {
+        console.warn('SaaS API offline, showing local fallback.');
     }
 }
 
-function updateTrendsChart(history) {
-    const ctx = document.getElementById('trendsChart').getContext('2d');
+async function renderFleet() {
+    try {
+        const response = await fetch(`${API_BASE}/admin/users`);
+        const users = await response.json();
 
-    // Process hourly data for last 12 hours
-    const labels = [];
-    const data = [];
-    const now = new Date();
-
-    for (let i = 11; i >= 0; i--) {
-        const d = new Date();
-        d.setHours(now.getHours() - i);
-        const day = d.toISOString().split('T')[0];
-        const key = `${day}-${d.getHours()}`;
-        labels.push(`${d.getHours()}:00`);
-        data.push(history.hourly[key] || 0);
+        const tbody = document.getElementById('fleet-tbody');
+        tbody.innerHTML = users.map(u => `
+            <tr>
+                <td style="font-family: monospace; font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600;">
+                    ${u.userId.substring(0, 18)}...
+                </td>
+                <td>
+                    <span class="status-badge status-active">Online</span>
+                </td>
+                <td style="font-weight: 700;">${u.totalFindings}</td>
+                <td style="opacity: 0.6; font-size: 0.8rem;">
+                    ${new Date(u.lastSeen).toLocaleTimeString()}
+                </td>
+                <td>
+                    <div style="width: 100px; height: 4px; background: #222; border-radius: 2px;">
+                        <div style="width: ${Math.min(100, (u.totalFixed / (u.totalFindings || 1)) * 100)}%; height: 100%; background: var(--accent-emerald); border-radius: 2px;"></div>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        document.getElementById('fleet-tbody').innerHTML = '<tr><td colspan="5" style="text-align:center; opacity: 0.5;">Unable to reach SaaS Aggregator API.</td></tr>';
     }
+}
 
-    // Clear existing chart if any
-    if (window.myChart) window.myChart.destroy();
-
-    window.myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Security Obstructions',
-                data: data,
-                borderColor: '#06b6d4',
-                backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: '#06b6d4',
-                pointRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { color: 'rgba(255,255,255,0.3)', stepSize: 1 }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: 'rgba(255,255,255,0.3)' }
-                }
-            }
-        }
-    });
+function handleFeedbackSubmit(e) {
+    e.preventDefault();
+    const feedback = {
+        id: Date.now(),
+        name: document.getElementById('fb-name').value,
+        email: document.getElementById('fb-email').value,
+        type: document.getElementById('fb-type').value,
+        message: document.getElementById('fb-message').value,
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        status: 'New'
+    };
+    const allFeedback = JSON.parse(localStorage.getItem('veil_feedback') || '[]');
+    allFeedback.unshift(feedback);
+    localStorage.setItem('veil_feedback', JSON.stringify(allFeedback));
+    document.getElementById('feedback-form').style.display = 'none';
+    document.getElementById('fb-success').style.display = 'block';
 }
 
 function renderFullFeedback() {
     const listEl = document.getElementById('full-feedback-list');
     const allFeedback = JSON.parse(localStorage.getItem('veil_feedback') || '[]');
-
     listEl.innerHTML = allFeedback.map(fb => `
         <div class="stat-card-pro" style="margin-bottom: 20px;">
             <div class="feed-header" style="margin-bottom: 15px;">
@@ -182,7 +145,6 @@ function renderRules() {
         { id: "command-injection", desc: "Flagging insecure shelf execution and system subprocess calls.", status: "Active", impact: "High" },
         { id: "weak-crypto", desc: "Identification of broken or deprecated hashing and encryption algos.", status: "Active", impact: "High" }
     ];
-
     const tbody = document.getElementById('rules-tbody');
     tbody.innerHTML = rules.map(r => `
         <tr>
@@ -197,39 +159,36 @@ function renderRules() {
 function simulateRpcLogs() {
     const logEl = document.getElementById('rpc-logs');
     const logs = [
-        `[${new Date().toLocaleTimeString()}] INFO: Engine Handshake Successful`,
-        `[${new Date().toLocaleTimeString()}] DEBUG: Spawning Go analyzer process...`,
-        `[${new Date().toLocaleTimeString()}] INFO: Listening on stdin/stdout (JSON-RPC 2.0)`,
-        `[${new Date().toLocaleTimeString()}] INFO: Active Rules loaded: 10`,
+        `[${new Date().toLocaleTimeString()}] INFO: SaaS Aggregator Connection: SUCCESS`,
+        `[${new Date().toLocaleTimeString()}] DEBUG: Spawning local engine (v1.0.4)`,
+        `[${new Date().toLocaleTimeString()}] INFO: Listening on JSON-RPC 2.0`,
         `[${new Date().toLocaleTimeString()}] SUCCESS: System ready for real-time analysis.`
     ];
-
     logEl.innerHTML = logs.map(l => `<div>${l}</div>`).join('');
+}
+
+function updateTrendsChart(history) {
+    const ctx = document.getElementById('trendsChart').getContext('2d');
+    const labels = [];
+    const data = [];
+    const now = new Date();
+    for (let i = 11; i >= 0; i--) {
+        const d = new Date(); d.setHours(now.getHours() - i);
+        const day = d.toISOString().split('T')[0];
+        const key = `${day}-${d.getHours()}`;
+        labels.push(`${d.getHours()}:00`);
+        data.push(history.hourly[key] || 0);
+    }
+    if (window.myChart) window.myChart.destroy();
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: labels, datasets: [{ label: 'Security Obstructions', data: data, borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#06b6d4', pointRadius: 4 }] },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: 'rgba(255,255,255,0.3)', stepSize: 1 } }, x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } } } }
+    });
 }
 
 function initializeStaticCharts() {
     const ctx = document.getElementById('trendsChart').getContext('2d');
     if (window.myChart) window.myChart.destroy();
-    window.myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'Now'],
-            datasets: [{
-                label: 'Python Risks',
-                data: [12, 19, 3, 5, 2, 3, 15],
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { display: false },
-                x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } }
-            }
-        }
-    });
+    window.myChart = new Chart(ctx, { type: 'line', data: { labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'Now'], datasets: [{ label: 'Global Risks', data: [12, 19, 3, 5, 2, 3, 15], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', tension: 0.4, fill: true }] }, options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } } } } });
 }

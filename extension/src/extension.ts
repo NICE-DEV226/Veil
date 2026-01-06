@@ -7,6 +7,7 @@ import { QuickFixProvider } from './actions/quick-fix';
 import { StatsManager } from './storage/stats';
 import { SidebarProvider } from './ui/sidebar';
 import { DashboardProvider } from './ui/dashboard';
+import { TelemetryService } from './engine/telemetry';
 
 let engineProcess: EngineProcess;
 
@@ -21,6 +22,9 @@ export function activate(context: vscode.ExtensionContext) {
     const hoverProvider = new HoverProvider(diagnosticProvider);
     const quickFixProvider = new QuickFixProvider(diagnosticProvider, statsManager);
     const sidebarProvider = new SidebarProvider(context, statsManager, diagnosticProvider);
+
+    const telemetryService = new TelemetryService(context, statsManager);
+    telemetryService.start();
 
     // Initial check for active editor
     if (vscode.window.activeTextEditor) {
