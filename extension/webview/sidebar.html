@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: var(--vscode-sideBar-background);
+            color: var(--vscode-sideBar-foreground);
+            font-family: var(--vscode-font-family);
+            padding: 15px;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 1.2em;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-card {
+            background-color: var(--vscode-editor-background);
+            border: 1px solid var(--vscode-widget-border);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--vscode-button-background);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .rule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rule-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--vscode-panel-border);
+        }
+
+        .rule-count {
+            font-weight: bold;
+            color: var(--vscode-errorForeground);
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.8em;
+            opacity: 0.6;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--vscode-textLink-foreground);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <span style="font-size: 1.5em;">🛡️</span>
+            <h2>Veil Security</h2>
+        </div>
+
+        <div class="stat-card">
+            <div id="total-prevented" class="stat-value">0</div>
+            <div class="stat-label">Issues Prevented</div>
+        </div>
+
+        <div>
+            <h3 style="font-size: 0.9em; margin-bottom: 10px;">Security Insights</h3>
+            <div id="rule-stats" class="rule-list">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <footer>
+            <p>Developed by Sawadogo Azael</p>
+            <p><a href="https://github.com/NICE-DEV226/Veil">View Source</a></p>
+        </footer>
+    </div>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        const totalEl = document.getElementById('total-prevented');
+        const findingsEl = document.querySelector('.rule-item:nth-child(1) .rule-count');
+        const streakEl = document.querySelector('.rule-item:nth-child(2) .rule-count');
+
+        window.addEventListener('message', event => {
+            const message = event.data;
+            switch (message.type) {
+                case 'updateStats':
+                    totalEl.textContent = message.total;
+                    renderRules(message.rules);
+                    break;
+            }
+        });
+
+        function renderRules(rules) {
+            listEl.innerHTML = '';
+            for (const [name, count] of Object.entries(rules)) {
+                if (count > 0) {
+                    const item = document.createElement('div');
+                    item.className = 'rule-item';
+                    item.innerHTML = `<span>${name}</span><span class="rule-count">${count}</span>`;
+                    listEl.appendChild(item);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

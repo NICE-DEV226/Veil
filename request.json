@@ -1,0 +1,10 @@
+{
+    "jsonrpc": "2.0",
+    "method": "analyze",
+    "params": {
+        "code": "# Test vulnerabilities\naws_key = \"AKIA1234567890ABCDEF\"\ngithub_token = \"ghp_1234567890abcdef1234567890abcdef1234\"\n\nimport os\nimport sqlite3\n\nuser_id = \"123\"\ndb = sqlite3.connect(\"test.db\")\ndb.execute(f\"SELECT * FROM users WHERE id = {user_id}\")\n\nos.system(\"ls -la\")",
+        "language": "python",
+        "filepath": "test.py"
+    },
+    "id": 1
+}

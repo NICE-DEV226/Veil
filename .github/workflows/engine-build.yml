@@ -1,0 +1,46 @@
+name: Engine Build & Release
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'engine/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'engine/**'
+
+jobs:
+  build:
+    name: Build Multi-Platform Engine
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64, arm64]
+        exclude:
+          - goos: windows
+            goarch: arm64
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+        cache-dependency-path: engine/go.sum
+
+    - name: Build
+      run: |
+        BINARY_NAME=veil
+        if [ "${{ matrix.goos }}" = "windows" ]; then
+          BINARY_NAME=veil.exe
+        fi
+        cd engine && CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ../bin/$BINARY_NAME ./cmd/main.go
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: veil-${{ matrix.goos }}-${{ matrix.goarch }}
+        path: bin/veil*

@@ -1,0 +1,34 @@
+# Binaries
+bin/
+*.exe
+veil
+veil.exe
+
+# Node dependencies
+node_modules/
+.eslintcache
+
+# Go
+engine/bin/
+engine/pkg/fixer/fixer.test
+
+# VS Code
+.vscode/
+*.vsix
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Build
+dist/
+out/
+build/
+extension/out/
+extension/dist/
+extension/node_modules/
+website/node_modules/

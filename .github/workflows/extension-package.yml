@@ -1,0 +1,43 @@
+name: Extension Package
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'extension/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'extension/**'
+
+jobs:
+  package:
+    name: Package Extension (.vsix)
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: extension/package-lock.json
+
+    - name: Install Dependencies
+      run: cd extension && npm ci
+
+    - name: Build Extension
+      run: cd extension && npm run compile
+
+    - name: Package VSIX
+      run: |
+        npm install -g @vscode/vsce
+        cd extension && vsce package -o ../veil-extension.vsix --no-git-tag-version --no-update-package-json
+
+    - name: Upload VSIX
+      uses: actions/upload-artifact@v4
+      with:
+        name: veil-extension
+        path: veil-extension.vsix

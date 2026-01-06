@@ -1,0 +1,85 @@
+{
+  "name": "veil",
+  "displayName": "Veil",
+  "description": "Real-time security for AI-generated code",
+  "version": "1.0.0",
+  "publisher": "NICE-DEV226",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Linters",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "security",
+    "vulnerability",
+    "ai",
+    "copilot",
+    "offline",
+    "real-time"
+  ],
+  "activationEvents": [
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "veil-explorer",
+          "title": "Veil",
+          "icon": "icon.png"
+        }
+      ]
+    },
+    "views": {
+      "veil-explorer": [
+        {
+          "type": "webview",
+          "id": "veil-sidebar",
+          "name": "Statistics",
+          "icon": "$(shield)"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "veil.analyzeActiveFile",
+        "title": "Veil: Scan Active File",
+        "category": "Veil"
+      }
+    ],
+    "configuration": {
+      "title": "Veil",
+      "properties": {
+        "veil.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable Veil"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "bundle": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "20.x",
+    "typescript": "^5.3.3",
+    "esbuild": "^0.20.0",
+    "@vscode/vsce": "^2.23.0"
+  }
+}

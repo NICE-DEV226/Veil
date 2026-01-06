@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Veil - Enterprise-grade real-time security for AI-assisted coding in VS Code. 100% Offline.">
+    <title>Veil | Real-Time AI Security for VS Code</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container container-nav">
+            <a href="#" class="brand">
+                <img src="logo1.png" alt="Veil Logo" class="brand-logo" loading="eager">
+                <span class="brand-name">Veil</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#install">Install</a>
+                <a href="https://github.com/NICE-DEV226/Veil" target="_blank">GitHub</a>
+                <a href="mailto:nicedev226@gmail.com" class="nav-btn">Contact Us</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-logo-container">
+                <img src="logo1.png" alt="Veil Logo" class="hero-logo-large" loading="eager">
+            </div>
+            <div class="hero-label">Official VS Code Extension</div>
+            <h1 class="hero-title">Protect your code from<br><span class="text-gradient">AI-generated risks.</span></h1>
+            <p class="hero-subtitle">Veil analyzes code from Copilot, Cursor, and Claude in real-time. Detect
+                vulnerabilities and get <b>instant fixes for Python & JavaScript</b> before they ever leave your VS
+                Code.
+            </p>
+            <div class="hero-actions">
+                <a href="#install" class="btn btn-primary">Start Protecting Now</a>
+                <a href="#features" class="btn btn-secondary">Explore 10 Security Rules</a>
+            </div>
+            <div class="hero-metrics">
+                <div class="metric">
+                    <span class="metric-num">100%</span>
+                    <span class="metric-text">Offline Analysis</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-num">&lt;200ms</span>
+                    <span class="metric-text">Detection Speed</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-num">0</span>
+                    <span class="metric-text">Data Sent to Cloud</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features -->
+    <section id="features" class="section section-features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Comprehensive Security Coverage</h2>
+                <p class="section-desc">Enterprise-grade detection for the most critical security vulnerabilities.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">01</span>
+                        <h3 class="feature-title">Hardcoded Secrets</h3>
+                    </div>
+                    <p class="feature-text">Detect API keys, tokens, and credentials before they are committed to source
+                        control.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">02</span>
+                        <h3 class="feature-title">SQL Injection</h3>
+                    </div>
+                    <p class="feature-text">Prevent dynamic query construction that leads to database exploitation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">03</span>
+                        <h3 class="feature-title">XSS Prevention</h3>
+                    </div>
+                    <p class="feature-text">Identify unsafe rendering of user content that could lead to browser
+                        hijacking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">04</span>
+                        <h3 class="feature-title">Command Injection</h3>
+                    </div>
+                    <p class="feature-text">Flag dangerous system calls and shell executions with unvalidated input.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">05</span>
+                        <h3 class="feature-title">Path Traversal</h3>
+                    </div>
+                    <p class="feature-text">Detect directory traversing vulnerabilities in file system operations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">06</span>
+                        <h3 class="feature-title">Weak Cryptography</h3>
+                    </div>
+                    <p class="feature-text">Guard against deprecated and broken cryptographic algorithms like MD5.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">07</span>
+                        <h3 class="feature-title">Dead Code detection</h3>
+                    </div>
+                    <p class="feature-text">Identify unused code that increases attack surface and binary size.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">08</span>
+                        <h3 class="feature-title">Error Handling</h3>
+                    </div>
+                    <p class="feature-text">Ensure all sensitive operations are properly wrapped in exception handlers.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">09</span>
+                        <h3 class="feature-title">Authentication</h3>
+                    </div>
+                    <p class="feature-text">Detect weak session management and insecure authentication patterns.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-number">10</span>
+                        <h3 class="feature-title">Deserialization</h3>
+                    </div>
+                    <p class="feature-text">Identify dangerous deserialization sinks that could lead to RCE.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Veil / How it Works -->
+    <section id="how-it-works" class="section section-why bg-alt">
+        <div class="container container-short">
+            <h2 class="section-title text-center">Privacy without Compromise</h2>
+            <div class="why-item">
+                <h3>100% Local Execution</h3>
+                <p>Unlike cloud-based scanners, Veil uses a locally compiled Go engine. Your code never leaves your
+                    workstation, ensuring intellectual property protection.</p>
+            </div>
+            <div class="why-item">
+                <h3>Built for Enterprise</h3>
+                <p>Designed to integrate into high-security environments where internet access is restricted or cloud
+                    scanners are prohibited by policy.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Install -->
+    <section id="install" class="section section-install">
+        <div class="container container-short">
+            <h2 class="section-title text-center">Seamless Installation</h2>
+            <div class="install-box">
+                <div class="install-step">
+                    <span class="step-badge">1</span>
+                    <div class="step-info">
+                        <h4>Open VS Code</h4>
+                        <p>Search for "Veil" in the official Marketplace.</p>
+                    </div>
+                </div>
+                <div class="install-step">
+                    <span class="step-badge">2</span>
+                    <div class="step-info">
+                        <h4>Click Install</h4>
+                        <p>Download the extension and let the local engine initialize.</p>
+                    </div>
+                </div>
+                <div class="install-code">
+                    <code>ext install NICE-DEV226.veil</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-wrap">
+                <div class="footer-brand">
+                    <img src="logo1.png" alt="Veil" loading="lazy">
+                    <span>Veil</span>
+                </div>
+                <div class="footer-author">
+                    Developed by <a href="https://github.com/NICE-DEV226" target="_blank">NICE-DEV</a>
+                </div>
+                <p class="footer-copy">&copy; 2026 Veil. 🛡️ Secure Python & JS globally. MIT Licensed.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/NICE-DEV226/Veil">⭐ GitHub Star</a>
+                    <a href="mailto:nicedev226@gmail.com">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
