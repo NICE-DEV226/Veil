@@ -58,8 +58,13 @@
     "commands": [
       {
         "command": "veil.analyzeActiveFile",
-        "title": "Veil: Scan Active File",
+        "title": "Veil: Analyze Active File",
         "category": "Veil"
+      },
+      {
+        "command": "veil.openAdmin",
+        "title": "Veil: Open Admin Command Center",
+        "icon": "$(dashboard)"
       }
     ],
     "configuration": {

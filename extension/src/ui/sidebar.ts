@@ -39,6 +39,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                         stats: this.statsManager.getStats()
                     });
                     break;
+                case 'openFeedback':
+                    vscode.env.openExternal(vscode.Uri.parse('https://nice-dev-veil.vercel.app/#feedback'));
+                    break;
+                case 'openAdmin':
+                    vscode.commands.executeCommand('veil.openAdmin');
+                    break;
             }
         });
 
@@ -258,6 +264,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                         Reset Stats
                     </button>
+
+                    <button class="action-btn secondary" id="feedback-btn" style="border: 1px dashed var(--vscode-panel-border); background: transparent;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Suggest a Fix
+                    </button>
+                    <p style="font-size: 10px; opacity: 0.5; margin-bottom: 5px;">Share feature ideas or new security rules.</p>
                 </div>
                 
                 <div class="info-section">
@@ -282,6 +294,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                     
                     document.getElementById('clear-btn').addEventListener('click', () => {
                         vscode.postMessage({ type: 'clearStats' });
+                    });
+
+                    document.getElementById('feedback-btn').addEventListener('click', () => {
+                        vscode.postMessage({ type: 'openFeedback' });
+                    });
+
+                    document.getElementById('admin-btn').addEventListener('click', () => {
+                        vscode.postMessage({ type: 'openAdmin' });
                     });
 
                     window.addEventListener('message', event => {

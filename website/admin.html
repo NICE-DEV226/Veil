@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veil Admin | Advanced Command Center</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --accent-emerald: #10b981;
+            --accent-cyan: #06b6d4;
+            --card-glass: rgba(13, 13, 13, 0.7);
+            --border-glass: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #020202;
+            color: #f1f1f1;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #080808;
+            border-right: 1px solid var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 50px;
+            padding: 0 10px;
+        }
+
+        .sidebar-logo img {
+            width: 32px;
+        }
+
+        .sidebar-logo span {
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: -1px;
+        }
+
+        .nav-menu {
+            flex: 1;
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 40px 60px;
+            background: radial-gradient(circle at top left, rgba(6, 182, 212, 0.05), transparent 40%);
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-text h1 {
+            font-size: 2.2rem;
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .welcome-text p {
+            opacity: 0.5;
+            margin: 5px 0 0;
+        }
+
+        /* Stats Grid */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card-pro {
+            background: var(--card-glass);
+            border: 1px solid var(--border-glass);
+            padding: 25px;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-val {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-lbl {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+            font-weight: 600;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .chart-section,
+        .feed-section,
+        .full-width-section {
+            background: var(--card-glass);
+            border: 1px solid var(--border-glass);
+            padding: 30px;
+            border-radius: 24px;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .feed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feed-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .feed-item:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .tag-rule {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .tag-feature {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+        }
+
+        .feed-content {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Rule Table */
+        .rule-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .rule-table th {
+            text-align: left;
+            padding: 15px;
+            opacity: 0.5;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .rule-table td {
+            padding: 15px;
+            border-top: 1px solid var(--border-glass);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        /* Config View */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .log-area {
+            background: #000;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #afafaf;
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-glass);
+        }
+
+        .glow-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="logo1.png" alt="Veil">
+            <span>Veil Admin</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-view="dashboard"><span>📊</span> Dashboard</li>
+            <li class="nav-item" data-view="rules"><span>🛡️</span> Security Rules</li>
+            <li class="nav-item" data-view="feedback"><span>📣</span> User Feedback</li>
+            <li class="nav-item" data-view="config"><span>⚙️</span> Engine Config</li>
+        </ul>
+        <div class="nav-item" style="color: #ff4d4d; border-top: 1px solid var(--border-glass); padding-top: 20px;"
+            onclick="window.location.href='index.html'">
+            <span>🚪</span> Exit Admin
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <!-- Dashboard View -->
+        <section id="dashboard" class="view-section active">
+            <header class="top-bar">
+                <div class="welcome-text">
+                    <h1>Command Center</h1>
+                    <p>Real-time security intelligence across 12.4k nodes.</p>
+                </div>
+            </header>
+
+            <section class="stats-summary">
+                <div class="stat-card-pro">
+                    <div class="stat-lbl">Active Users</div>
+                    <div class="stat-val">3,892</div>
+                    <div style="font-size: 0.7rem; color: var(--accent-emerald);">+12% vs last week</div>
+                </div>
+                <div class="stat-card-pro">
+                    <div class="stat-lbl">Vulnerabilities Blocked</div>
+                    <div class="stat-val">48,291</div>
+                    <div style="font-size: 0.7rem; color: var(--accent-emerald);">Real-time AST analysis</div>
+                </div>
+                <div class="stat-card-pro">
+                    <div class="stat-lbl">Feedback Received</div>
+                    <div class="stat-val" id="total-feedback-count">0</div>
+                    <div style="font-size: 0.7rem; color: var(--accent-cyan);">Global Suggestions</div>
+                </div>
+                <div class="stat-card-pro">
+                    <div class="stat-lbl">Engine Health</div>
+                    <div class="stat-val" style="color: var(--accent-emerald);">99.98%</div>
+                    <div style="font-size: 0.7rem; opacity: 0.5;">Latency: 42ms</div>
+                </div>
+            </section>
+
+            <div class="dashboard-grid">
+                <section class="chart-section">
+                    <h3>Vulnerability Trends <div class="glow-dot"></div>
+                    </h3>
+                    <canvas id="trendsChart" height="200"></canvas>
+                </section>
+
+                <section class="feed-section">
+                    <h3>Recent Suggestions</h3>
+                    <div class="feed-list" id="dashboard-feed">
+                        <!-- Brief feed -->
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <!-- Rules Management View -->
+        <section id="rules" class="view-section">
+            <header class="top-bar">
+                <div class="welcome-text">
+                    <h1>Security Rules</h1>
+                    <p>Manage and monitor global detection patterns.</p>
+                </div>
+            </header>
+
+            <div class="full-width-section">
+                <table class="rule-table">
+                    <thead>
+                        <tr>
+                            <th>Rule ID</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rules-tbody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Feedback Full View -->
+        <section id="feedback" class="view-section">
+            <header class="top-bar">
+                <div class="welcome-text">
+                    <h1>User Intelligence</h1>
+                    <p>Comprehensive list of community suggestions and reports.</p>
+                </div>
+            </header>
+
+            <div class="full-width-section">
+                <div class="dashboard-grid" style="grid-template-columns: 1fr;" id="full-feedback-list">
+                    <!-- Complete feedback feed -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Engine Config View -->
+        <section id="config" class="view-section">
+            <header class="top-bar">
+                <div class="welcome-text">
+                    <h1>Engine Configuration</h1>
+                    <p>Core analysis engine health and JSON-RPC status.</p>
+                </div>
+            </header>
+
+            <div class="config-grid">
+                <div class="chart-section">
+                    <h3>System Resources</h3>
+                    <div style="display: flex; flex-direction: column; gap: 20px; padding: 10px 0;">
+                        <div>
+                            <div class="stat-lbl" style="margin-bottom: 8px;">CPU Load</div>
+                            <div style="height: 8px; background: #222; border-radius: 4px; overflow: hidden;">
+                                <div style="height: 100%; width: 18%; background: var(--accent-cyan);"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="stat-lbl" style="margin-bottom: 8px;">Memory Usage (Go)</div>
+                            <div style="height: 8px; background: #222; border-radius: 4px; overflow: hidden;">
+                                <div style="height: 100%; width: 34%; background: var(--accent-emerald);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-section">
+                    <h3>JSON-RPC Logs</h3>
+                    <div class="log-area" id="rpc-logs">
+                        [03:34:01] INFO: Request received: "veil.analyze"
+                        [03:34:01] DEBUG: AST Walk complete (node_count: 542)
+                        [03:34:01] INFO: Rule "weak-crypto" matched at L15
+                        [03:34:01] DEBUG: QuickFix generated for MD5 -> SHA256
+                        [03:34:02] INFO: Response sent to VS Code
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

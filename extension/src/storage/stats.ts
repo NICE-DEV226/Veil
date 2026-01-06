@@ -9,6 +9,10 @@ export interface UserStats {
     };
     lastUsed: string;
     findingsByRule: { [rule: string]: number };
+    history: {
+        hourly: { [hour: string]: number }; // Format: YYYY-MM-DD-HH
+        daily: { [date: string]: number };  // Format: YYYY-MM-DD
+    };
 }
 
 const DEFAULT_STATS: UserStats = {
@@ -16,7 +20,11 @@ const DEFAULT_STATS: UserStats = {
     totalFixed: 0,
     streak: { current: 0, longest: 0 },
     lastUsed: new Date().toISOString().split('T')[0],
-    findingsByRule: {}
+    findingsByRule: {},
+    history: {
+        hourly: {},
+        daily: {}
+    }
 };
 
 export class StatsManager {
@@ -35,10 +43,18 @@ export class StatsManager {
         // Update totals
         stats.totalFindings += newFindingsCount;
 
-        // Update per-rule stats
         for (const rule of rules) {
             stats.findingsByRule[rule] = (stats.findingsByRule[rule] || 0) + 1;
         }
+
+        // Update history
+        const now = new Date();
+        const hourKey = `${today}-${now.getHours()}`;
+        stats.history.hourly[hourKey] = (stats.history.hourly[hourKey] || 0) + newFindingsCount;
+        stats.history.daily[today] = (stats.history.daily[today] || 0) + newFindingsCount;
+
+        // Cleanup old history (keep 7 days of daily, 24h of hourly)
+        this.cleanupHistory(stats);
 
         // Update streak
         if (stats.lastUsed !== today) {
@@ -69,5 +85,18 @@ export class StatsManager {
 
     public clearStats() {
         this.context.globalState.update(StatsManager.KEY, DEFAULT_STATS);
+    }
+
+    private cleanupHistory(stats: UserStats) {
+        // Simple cleanup: only keep last 100 entries to prevent globalState bloat
+        const hourKeys = Object.keys(stats.history.hourly).sort();
+        if (hourKeys.length > 48) {
+            hourKeys.slice(0, hourKeys.length - 48).forEach(k => delete stats.history.hourly[k]);
+        }
+
+        const dailyKeys = Object.keys(stats.history.daily).sort();
+        if (dailyKeys.length > 30) {
+            dailyKeys.slice(0, dailyKeys.length - 30).forEach(k => delete stats.history.daily[k]);
+        }
     }
 }

@@ -193,6 +193,61 @@
         </div>
     </section>
 
+    <!-- Feedback & Suggestions -->
+    <section id="feedback" class="section section-feedback">
+        <div class="container container-short">
+            <div class="section-header text-center">
+                <span class="hero-label">Community Driven</span>
+                <h2 class="section-title">Help Build the Future of <span class="text-gradient">Veil</span></h2>
+                <p class="section-desc">Your insights help us refine our security engine. Suggest a rule, report a bug,
+                    or share a feature idea.</p>
+            </div>
+
+            <div class="feedback-wrapper">
+                <form id="feedback-form" class="feedback-form-premium">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="fb-name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="fb-email" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Suggestion Type</label>
+                        <select id="fb-type" required>
+                            <option value="" disabled selected>Select category...</option>
+                            <option value="rule">New Security Rule</option>
+                            <option value="feature">AI Integration Feature</option>
+                            <option value="performance">Engine Performance</option>
+                            <option value="other">General Feedback</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Your Message</label>
+                        <textarea id="fb-message" rows="4" placeholder="Describe your suggestion in detail..."
+                            required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Broadcast Suggestion 📡</button>
+                </form>
+
+                <div id="fb-success" class="success-panel" style="display: none;">
+                    <div class="success-glow"></div>
+                    <span class="success-icon">✨</span>
+                    <h3>Suggestion Received</h3>
+                    <p>Your feedback has been transmitted to the Veil Core Team. Check the Admin Dashboard to see recent
+                        activity.</p>
+                    <a href="admin.html" class="btn btn-secondary">Go to Admin Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">

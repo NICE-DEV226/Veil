@@ -26,6 +26,9 @@ body {
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
     overflow-x: hidden;
+    --accent-red: #ff4d4d;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --input-bg: rgba(255, 255, 255, 0.05);
 }
 
 .container {

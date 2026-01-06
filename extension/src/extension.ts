@@ -6,6 +6,7 @@ import { HoverProvider } from './actions/hover';
 import { QuickFixProvider } from './actions/quick-fix';
 import { StatsManager } from './storage/stats';
 import { SidebarProvider } from './ui/sidebar';
+import { DashboardProvider } from './ui/dashboard';
 
 let engineProcess: EngineProcess;
 
@@ -38,6 +39,9 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('veil.applyQuickFix', (rule: string) => {
             statsManager.incrementFixed();
             vscode.window.setStatusBarMessage(`Veil: Applied fix for ${rule}`, 3000);
+        }),
+        vscode.commands.registerCommand('veil.openAdmin', () => {
+            DashboardProvider.createOrShow(context.extensionUri, statsManager);
         })
     );
 

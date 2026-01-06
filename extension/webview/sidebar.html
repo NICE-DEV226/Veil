@@ -96,6 +96,12 @@
             <div class="stat-label">Issues Prevented</div>
         </div>
 
+        <div class="stat-card" style="margin-top: 10px; cursor: pointer; border-color: rgba(255,255,255,0.1);"
+            onclick="giveFeedback()">
+            <div style="font-size: 1.2em; margin-bottom: 5px;">📣 Give Feedback</div>
+            <div class="stat-label" style="font-size: 0.75em;">Suggest a fix or feature</div>
+        </div>
+
         <div>
             <h3 style="font-size: 0.9em; margin-bottom: 10px;">Security Insights</h3>
             <div id="rule-stats" class="rule-list">
@@ -124,6 +130,10 @@
                     break;
             }
         });
+
+        function giveFeedback() {
+            vscode.postMessage({ type: 'openFeedback' });
+        }
 
         function renderRules(rules) {
             listEl.innerHTML = '';
