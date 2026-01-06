@@ -1,0 +1,19 @@
+.vscode/**
+.vscode-test/**
+out/test/**
+src/**
+tslint.json
+tsconfig.json
+package-lock.json
+tests/**
+.git/**
+.github/**
+.gitignore
+.vscodeignore
+**/*.map
+**/*.ts
+
+# But keep the binaries!
+!bin/**
+!icon.png
+!assets/**

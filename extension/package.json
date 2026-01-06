@@ -4,6 +4,8 @@
   "description": "Real-time security for AI-generated code",
   "version": "1.0.0",
   "publisher": "NICE-DEV226",
+  "author": "NICE-DEV (Sawadogo Azael)",
+  "license": "MIT",
   "icon": "icon.png",
   "homepage": "https://github.com/NICE-DEV226/Veil",
   "repository": {
