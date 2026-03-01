@@ -1,14 +1,7 @@
 name: Extension Package
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'extension/**'
-      - '.github/workflows/extension-package.yml'
-  pull_request:
-    branches: [ main ]
-    paths:
+ 
       - 'extension/**'
       - '.github/workflows/extension-package.yml'
 
